@@ -1,0 +1,98 @@
+<div>
+    <center>
+        <h1 style="color:red;">♥ Welcome to InternetChan ♥</h1>
+    </center>
+
+    <center>
+        <b style="font-weight:bold;"></p>InternetChan is a minimalistic messageboard similiar to 4Chan and old 2000s websites.</p>
+        </b>
+    </center>
+
+    <h1></h1>
+
+ 
+
+    <h1></h1>
+
+    <div class="info">
+        <p style="background-color: lightgreen;"> News</p>
+        <p> 9 March of 2026 --- InternetChan starts developement.</p>
+    </div>
+    
+    <h1></h1>
+    
+   <center><input type="button" value="Post" onclick="post()"></center>
+   
+   <h1></h1>
+   
+   <center><textarea style="width:500px; height:30px;" id="title"></textarea></center>
+   
+    <center><textarea style="width:500px; height:300px;" id="message"></textarea></center>
+    
+    <center><div class="post" id="template"></div></div></center>
+   
+</div>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+
+    .info {
+        width: 648px;
+        height: 500px;
+        background-color: white;
+        outline: 1px solid;
+    }
+    
+    
+    .post {
+        width: 500px;
+        height: 250px;
+        background-color: lightgreen;
+        display: none;
+    }
+    
+</style>
+
+<script>
+    
+    let save = JSON.parse(localStorage.getItem("posts")) || [];
+    
+    function post() {
+        
+    const message = document.getElementById("message");
+    const title = document.getElementById("title");
+    
+    const post = message.value.trim();
+    const text = title.value.trim();
+    
+    const template = document.getElementById("template");
+    
+    if(text === "" || post === "") {
+        alert("You must enter both a title and a body.");
+        return;
+        
+    }
+    
+    template.style.display = "block"
+    
+    const newpost = document.createElement("div");
+    newpost.className = "chanpost";
+    
+    const date = new Date().toLocaleString();
+    
+    const postContent = `<div class="postTitle">${text} (${date})</div>
+                         <div class="postBody">${post}</div>`;
+                         
+    newpost.innerHTML = postContent;
+
+    template.prepend(newpost);
+    
+    save.push(postContent);
+    localStorage.setItem("posts", JSON.stringify(save));
+
+    title.value = "";
+    message.value = "";
+}
+    
+</script>
