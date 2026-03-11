@@ -54,45 +54,72 @@
     
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
-    
-    let save = JSON.parse(localStorage.getItem("posts")) || [];
-    
-    function post() {
-        
-    const message = document.getElementById("message");
-    const title = document.getElementById("title");
-    
-    const post = message.value.trim();
-    const text = title.value.trim();
-    
-    const template = document.getElementById("template");
-    
-    if(text === "" || post === "") {
-        alert("You must enter both a title and a body.");
-        return;
-        
-    }
-    
-    template.style.display = "block"
-    
-    const newpost = document.createElement("div");
-    newpost.className = "chanpost";
-    
-    const date = new Date().toLocaleString();
-    
-    const postContent = `<div class="postTitle">${text} (${date})</div>
-                         <div class="postBody">${post}</div>`;
-                         
-    newpost.innerHTML = postContent;
 
-    template.prepend(newpost);
-    
-    save.push(postContent);
-    localStorage.setItem("posts", JSON.stringify(save));
+    <! i hate how i had to use chatgpt here -->
 
-    title.value = "";
-    message.value = "";
+const { createClient } = supabase;
+
+const supabaseClient = createClient(
+"https://xvbxlcwrwrzalslgoehh.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2YnhsY3dyd3J6YWxzbGdvZWhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzQwODEsImV4cCI6MjA4ODgxMDA4MX0.LBhYrBVmKH8i_SWrwzHnmUinLiO4MlY8LylNtxTHkf4"
+);
+
+async function post() {
+
+const message = document.getElementById("message");
+const title = document.getElementById("title");
+
+const body = message.value.trim();
+const text = title.value.trim();
+
+if(text === "" || body === "") {
+alert("You must enter both a title and a body.");
+return;
 }
-    
+
+await supabaseClient
+.from("posts")
+.insert([{ title: text, body: body }]);
+
+title.value="";
+message.value="";
+
+loadPosts();
+}
+
+async function loadPosts(){
+
+const template = document.getElementById("template");
+
+template.innerHTML="";
+template.style.display="block";
+
+const { data } = await supabaseClient
+.from("posts")
+.select("*")
+.order("created_at",{ascending:false});
+
+data.forEach(p=>{
+
+const div=document.createElement("div");
+
+div.innerHTML=`
+<div class="postTitle">${p.title}</div>
+<div class="postBody">${p.body}</div>
+`;
+
+template.appendChild(div);
+
+});
+
+}
+
+loadPosts();
+
 </script>
